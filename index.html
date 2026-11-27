@@ -26,19 +26,18 @@
         body { width: 100%; max-width: 100%; font-family: sans-serif; background: var(--fondo); margin: 0; min-height: 100vh; min-height: 100dvh; box-sizing: border-box; padding-bottom: calc(260px + env(safe-area-inset-bottom, 0px)); color: white; transition: 0.3s; position: relative; }
         
         .header { background: var(--tarjeta); padding: 10px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.3); color: var(--texto); }
-        .controles-extra { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .btn-mini { background: rgba(0,0,0,0.1); border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; font-size: 14px; color: var(--texto); cursor: pointer; }
+        .controles-extra { display: flex; justify-content: space-between; align-items: center; gap: 4px; margin-bottom: 8px; }
+        .btn-mini { background: rgba(0,0,0,0.1); border: none; padding: 7px 9px; border-radius: 8px; font-weight: bold; font-size: 13px; color: var(--texto); cursor: pointer; }
+
+        /* Selector desplegable compacto de Supermercados en barra superior */
+        .select-super-compacto { background: rgba(0,0,0,0.1); border: 1px solid rgba(0,0,0,0.15); padding: 7px 6px; border-radius: 8px; font-weight: bold; font-size: 12px; color: var(--texto); cursor: pointer; max-width: 102px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; outline: none; transition: 0.2s; }
+        .select-super-compacto.active { background: var(--azul); color: #ffffff; border-color: var(--azul); }
+        .select-super-compacto option { background: #ffffff; color: #333333; font-weight: bold; }
 
         .buscador-caja { margin-bottom: 8px; position: relative; }
         .buscador-input { width: 100%; padding: 12px 14px; border-radius: 10px; border: 2px solid rgba(0,0,0,0.2); box-sizing: border-box; font-size: 16px; font-weight: bold; color: #000; }
         .sugerencias-busqueda { background: #fff; color: #333; border-radius: 10px; margin-top: 4px; max-height: 220px; overflow-y: auto; position: absolute; width: 100%; z-index: 150; box-shadow: 0 4px 12px rgba(0,0,0,0.3); display: none; }
         .sugerencia-item { padding: 12px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; font-size: 15px; cursor: pointer; }
-
-        /* Barra horizontal de filtro por Supermercado */
-        .barra-supers { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 6px; scrollbar-width: none; -ms-overflow-style: none; }
-        .barra-supers::-webkit-scrollbar { display: none; }
-        .chip-super { background: rgba(0,0,0,0.12); color: var(--texto); border: 1px solid rgba(0,0,0,0.15); border-radius: 16px; padding: 6px 12px; font-size: 12px; font-weight: bold; white-space: nowrap; cursor: pointer; transition: 0.2s; flex-shrink: 0; }
-        .chip-super.active { background: var(--azul); color: white; border-color: var(--azul); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
 
         /* Toast con colores dinámicos */
         #toast { display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--verde); color: white; padding: 12px 20px; border-radius: 25px; font-weight: bold; font-size: 15px; z-index: 400; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: background 0.3s; text-align: center; max-width: 88vw; }
@@ -154,15 +153,14 @@
 
         @media (orientation: landscape) and (max-height: 540px) {
             .header { padding: 6px 10px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
-            .controles-extra { margin-bottom: 0; flex: 0 0 auto; gap: 6px; }
-            .btn-mini { padding: 5px 9px; font-size: 12px; }
-            .buscador-caja { margin-bottom: 0; flex: 1 1 160px; min-width: 140px; }
+            .controles-extra { margin-bottom: 0; flex: 0 0 auto; gap: 4px; }
+            .btn-mini { padding: 5px 8px; font-size: 12px; }
+            .select-super-compacto { padding: 5px 6px; font-size: 11px; max-width: 115px; }
+            .buscador-caja { margin-bottom: 0; flex: 1 1 150px; min-width: 130px; }
             .buscador-input { padding: 6px 10px; font-size: 14px; }
             .total-info { flex: 0 0 auto; gap: 10px; }
             .total-info h1 { font-size: 14px !important; }
             #total { font-size: 20px; }
-            .barra-supers { flex-basis: 100%; padding-bottom: 2px; margin-bottom: 0; }
-            .chip-super { padding: 4px 10px; font-size: 11px; }
             .contenedor-semaforo { margin: 2px 0; height: 6px; flex-basis: 100%; }
             .tabs { flex-basis: 100%; padding: 0; margin-bottom: 0; }
             .tab { padding: 6px; font-size: 12px; }
@@ -178,6 +176,7 @@
             .pantalla { grid-template-columns: repeat(4, 1fr); gap: 15px; }
             .modal-contenido { max-width: 500px; }
             .titulo-zona-seccion { grid-column: span 4; }
+            .select-super-compacto { max-width: 150px; font-size: 13px; }
         }
     </style>
 </head>
@@ -187,13 +186,14 @@
 
 <div class="header">
     <div class="controles-extra">
-        <div>
+        <div style="display:flex; align-items:center; gap:3px;">
             <button class="btn-mini" onclick="ajustarLetra(1)">T+</button>
             <button class="btn-mini" onclick="ajustarLetra(-1)">T-</button>
             <button class="btn-mini" onclick="toggleModoNoche()"><i class="fas fa-moon"></i></button>
             <button class="btn-mini" onclick="abrirModal('modal-tutorial')" title="Instrucciones"><i class="fas fa-circle-question"></i></button>
         </div>
-        <div style="display:flex; gap:6px;">
+        <select id="select-super-filtro" class="select-super-compacto" onchange="seleccionarSuperFiltro(this.value)" title="Supermercado"></select>
+        <div style="display:flex; align-items:center; gap:4px;">
             <button class="btn-mini" style="background:var(--azul); color:white;" onclick="abrirModal('modal-calc')"><i class="fas fa-calculator"></i></button>
             <button class="btn-mini" onclick="abrirModal('modal-desglose')"><i class="fas fa-shopping-basket"></i> <span data-i18n="btn_cart">Carro</span></button>
             <button class="btn-mini" onclick="abrirModal('modal-ajustes')"><i class="fas fa-gear"></i></button>
@@ -204,9 +204,6 @@
         <input type="text" class="buscador-input" id="buscador" placeholder="🔍 Escribe producto (ej. mantequilla, tomate)..." data-i18n-ph="search_ph" oninput="filtrarProductos()">
         <div class="sugerencias-busqueda" id="sugerencias"></div>
     </div>
-
-    <!-- Barra de filtro rápido por Supermercado (hasta 5) -->
-    <div class="barra-supers" id="barra-supers-filtro"></div>
 
     <div class="total-info">
         <div>
@@ -746,7 +743,7 @@
         }
 
         const VER_KEY = 'supermart_version_instalada';
-        const VERSION_ACTUAL = '3.2.7_clean';
+        const VERSION_ACTUAL = '3.2.7_compact';
 
         if (localStorage.getItem(VER_KEY) !== VERSION_ACTUAL) {
             if ('caches' in window) {
@@ -1254,7 +1251,7 @@
             edit_prod_title: "✏️ Editar", edit_prod_name: "Nom:", edit_prod_price: "Preu (€):", edit_prod_super: "Supermercat:", btn_save: "Guardar",
             cart_title: "🛒 Productes a la Cistella", btn_share_cart: "Compartir per WhatsApp", hist_title: "📜 Historial de Compres", settings_title: "⚙️ Configuració",
             supers_manage_title: "🏪 Els Meus Supermercats (Màx. 5):", super_name_ph: "Ex. Mercadona, Lidl...", btn_add_short: "Afegir",
-            lang_select_label: "🌐 Idioma de l'Aplicació:", budget_limit_label: "Límit de Pressupost (€):", btn_save_limit: "Guardar Límit", btn_buy_coffee: "☕ Convida'm a un cafè", btn_view_hist: "📜 Veure Historial Guardat", danger_zone: "⚠️ ZONA DE PERILL", btn_clear_hist: "Esborrar Historial Complet", switch_aisles_label: "🛒 Ordenar per Passadissos:", sync_title: "📱 Sincronització Dispositius:", btn_copy_key: "Copiar Clau", btn_link_device: "Vincular Mòbil", btn_unlink_device: "Desvincular Dispositiu",
+            lang_select_label: "🌐 Idioma de l'Aplicació:", budget_limit_label: "Límit de Pressupost (€):", btn_save_limit: "Guardar Límit", btn_buy_coffee: "☕ Convida'm a un cafè", btn_view_hist: "📜 Veure Historial Guardat", danger_zone: "⚠️ ZONA DE PERILL", btn_clear_hist: "Esborrar Historial Complet", switch_aisles_label: "🛒 Ordenar per Passadissos:", sync_title: "📱 Sincronització Dispositius:", btn_copy_key: "Copiar Clau", btn_link_device: "Vincular Mòbil", btn_unlink_device: "Desvincular Dispositivo",
             link_modal_desc: "Enganxa la clau (usr_...) del dispositiu principal.", btn_link_now: "Vincular",
             zone_entrance: "Zona 1: Entrada i Frescos", zone_dry: "Zona 2: Passadissos Secs", zone_cold: "Zona 3: Murals de Fred i Carna", zone_home: "Zona 4: Neteja", zone_checkout: "Zona 5: Sortida i Congelats",
             scanner_title: "Escàner de tiquets", scanner_sub: "Escaneja el teu tiquet de paper després de comprar. Si és llarg, fes-li diverses fotos.",
@@ -1420,16 +1417,23 @@
 
     if (localStorage.getItem('modo_noche') === 'true') document.body.classList.add('noche');
 
-    /* --- GESTIÓN DE HASTA 5 SUPERMERCADOS PERSONALIZABLES --- */
+    /* --- SELECTOR DESPLEGABLE COMPACTO DE HASTA 5 SUPERMERCADOS --- */
     function renderBarraSupermercados() {
-        const cont = document.getElementById('barra-supers-filtro');
-        if (!cont) return;
+        const sel = document.getElementById('select-super-filtro');
+        if (!sel) return;
 
-        let html = `<button class="chip-super ${supermercadoFiltro === 'ALL' ? 'active' : ''}" onclick="seleccionarSuperFiltro('ALL')">🏪 ${t.all_supers || 'Todos'}</button>`;
+        let html = `<option value="ALL">🏪 ${t.all_supers || 'Todos'}</option>`;
         misSupermercados.forEach(s => {
-            html += `<button class="chip-super ${supermercadoFiltro === s ? 'active' : ''}" onclick="seleccionarSuperFiltro('${s.replace(/'/g, "\\'")}')">${s}</button>`;
+            html += `<option value="${s.replace(/"/g, '&quot;')}">🏪 ${s}</option>`;
         });
-        cont.innerHTML = html;
+        sel.innerHTML = html;
+        sel.value = supermercadoFiltro;
+
+        if (supermercadoFiltro !== 'ALL') {
+            sel.classList.add('active');
+        } else {
+            sel.classList.remove('active');
+        }
     }
 
     function seleccionarSuperFiltro(nombreSuper) {
